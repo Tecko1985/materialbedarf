@@ -271,8 +271,11 @@ function renderMeineMeldungen() {
 
 async function withdrawMeldung(id) {
   if (!confirm("Diese Meldung wirklich zurückziehen?")) return;
+  // Status-Guard auch in der Mutation (nicht nur im UI-Button): beim Konflikt-Retry
+  // läuft mutate() erneut auf dem frischen Remote-Stand — hat ein Admin die Meldung
+  // inzwischen entschieden, darf das Zurückziehen sie nicht mehr löschen.
   await saveWithConflictRetry((data) => {
-    data.meldungen = data.meldungen.filter((m) => m.id !== id);
+    data.meldungen = data.meldungen.filter((m) => !(m.id === id && m.status === "offen"));
   });
   renderMeineMeldungen();
 }
@@ -301,10 +304,11 @@ function renderAdminMeldungen() {
         <div class="meldung-positionen">${escapeHtml(positionenText(m.positionen))}</div>
         <div class="meldung-grund muted">${escapeHtml(m.grund)}</div>
         ${m.dringlichkeit === "dringend" ? `<span class="dringend-flag">⚠ Dringend</span>` : ""}
+        ${(m.status === "offen" || m.status === "angenommen") ? `
         <div class="form-field admin-kommentar-field">
           <label>Admin-Kommentar</label>
           <input type="text" class="admin-kommentar-input" value="${escapeHtml(m.adminKommentar || "")}" placeholder="z.B. wird nächste Woche bestellt" />
-        </div>
+        </div>` : (m.adminKommentar ? `<div class="meldung-kommentar muted">Kommentar: ${escapeHtml(m.adminKommentar)}</div>` : "")}
       </div>
       <div class="meldung-row-actions">
         ${statusBadgeHtml(m.status)}
