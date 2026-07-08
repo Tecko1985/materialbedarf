@@ -112,6 +112,19 @@ function setupTabs() {
   document.querySelectorAll("nav button[data-tab]").forEach((b) => {
     b.addEventListener("click", () => activateTab(b.dataset.tab));
   });
+
+  // Versionshistorie liegt im oeffentlichen Meldung-Tab (siehe index.html), nicht im
+  // admin-only Verwaltung-Tab — fuer jeden eingeloggten Nutzer erreichbar.
+  const versionBadgeHeader = document.getElementById("version-badge");
+  const openVersionHistory = () => {
+    activateTab("meldung");
+    const panel = document.getElementById("changelog-panel");
+    if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  versionBadgeHeader.addEventListener("click", openVersionHistory);
+  versionBadgeHeader.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openVersionHistory(); }
+  });
 }
 
 // ---------- Mannschaft-Feld ----------
@@ -493,18 +506,6 @@ async function init() {
     renderMeineMeldungen();
     if (currentIsAdmin) {
       renderAdminMeldungen();
-      // Header-Badge nur fuer Admins klickbar machen: der Ziel-Tab "verwaltung" ist
-      // fuer Nicht-Admins per nav-verwaltung ausgeblendet, daher hier bewusst nicht
-      // global verdrahtet.
-      const versionBadgeHeader = document.getElementById("version-badge");
-      versionBadgeHeader.classList.add("version-badge-link");
-      versionBadgeHeader.setAttribute("role", "button");
-      versionBadgeHeader.setAttribute("tabindex", "0");
-      versionBadgeHeader.title = "Versionshistorie ansehen";
-      versionBadgeHeader.addEventListener("click", () => activateTab("verwaltung"));
-      versionBadgeHeader.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activateTab("verwaltung"); }
-      });
     }
   } catch (e) {
     if (e instanceof NotLoggedInError) {

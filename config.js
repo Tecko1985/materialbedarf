@@ -1,6 +1,17 @@
-const APP_VERSION = "1.2";
+const APP_VERSION = "1.3";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.3",
+    groups: [
+      {
+        title: "Versionsbadge",
+        items: [
+          "Die Versionshistorie ist umgezogen in den Meldung-Tab und damit für alle Nutzer sichtbar, nicht mehr nur für Admins — der Klick auf den Versionshinweis funktioniert jetzt für jeden."
+        ]
+      }
+    ]
+  },
   {
     version: "1.2",
     groups: [
