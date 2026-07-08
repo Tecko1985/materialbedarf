@@ -493,6 +493,18 @@ async function init() {
     renderMeineMeldungen();
     if (currentIsAdmin) {
       renderAdminMeldungen();
+      // Header-Badge nur fuer Admins klickbar machen: der Ziel-Tab "verwaltung" ist
+      // fuer Nicht-Admins per nav-verwaltung ausgeblendet, daher hier bewusst nicht
+      // global verdrahtet.
+      const versionBadgeHeader = document.getElementById("version-badge");
+      versionBadgeHeader.classList.add("version-badge-link");
+      versionBadgeHeader.setAttribute("role", "button");
+      versionBadgeHeader.setAttribute("tabindex", "0");
+      versionBadgeHeader.title = "Versionshistorie ansehen";
+      versionBadgeHeader.addEventListener("click", () => activateTab("verwaltung"));
+      versionBadgeHeader.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activateTab("verwaltung"); }
+      });
     }
   } catch (e) {
     if (e instanceof NotLoggedInError) {

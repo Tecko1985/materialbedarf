@@ -1,6 +1,17 @@
-const APP_VERSION = "1.1";
+const APP_VERSION = "1.2";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.2",
+    groups: [
+      {
+        title: "Versionsbadge",
+        items: [
+          "Der Versionshinweis oben neben dem Titel ist für Admins jetzt anklickbar und führt direkt zu dieser Änderungsübersicht im Verwaltung-Tab."
+        ]
+      }
+    ]
+  },
   {
     version: "1.1",
     groups: [
