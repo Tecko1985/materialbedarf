@@ -1,6 +1,17 @@
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.1",
+    groups: [
+      {
+        title: "Bearbeiten-Recht",
+        items: [
+          "Annehmen/Ablehnen/Als gekauft markieren/Löschen fremder Meldungen jetzt an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt, nicht mehr an Admin-Status allein."
+        ]
+      }
+    ]
+  },
   {
     version: "1.0",
     groups: [

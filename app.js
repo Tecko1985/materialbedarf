@@ -1,9 +1,12 @@
 let appData = { meldungen: [] };
 let currentUsername = null;
 let currentIsAdmin = false;
+let currentCanEdit = false;
 let currentVorname = null;
 let currentNachname = null;
 let currentMannschaften = [];
+
+function canEdit() { return currentIsAdmin || currentCanEdit; }
 let currentStatusFilter = "alle";
 let positionRowSeq = 0;
 
@@ -337,6 +340,7 @@ function renderAdminMeldungen() {
 }
 
 async function entscheideMeldung(id, entscheidung, adminKommentar) {
+  if (!canEdit()) return;
   await saveWithConflictRetry((data) => {
     const m = data.meldungen.find((x) => x.id === id);
     if (!m || m.status !== "offen") return;
@@ -349,6 +353,7 @@ async function entscheideMeldung(id, entscheidung, adminKommentar) {
 }
 
 async function alsGekauftMarkieren(id, adminKommentar) {
+  if (!canEdit()) return;
   await saveWithConflictRetry((data) => {
     const m = data.meldungen.find((x) => x.id === id);
     if (!m || m.status !== "angenommen") return;
@@ -360,6 +365,7 @@ async function alsGekauftMarkieren(id, adminKommentar) {
 }
 
 async function deleteMeldungAdmin(id) {
+  if (!canEdit()) return;
   if (!confirm("Diese Meldung wirklich endgültig löschen?")) return;
   await saveWithConflictRetry((data) => {
     data.meldungen = data.meldungen.filter((m) => m.id !== id);
@@ -495,16 +501,17 @@ async function init() {
     const [me, data] = await Promise.all([fetchMe(), gatewayLoad()]);
     currentUsername = me.username;
     currentIsAdmin = !!me.isAdmin;
+    currentCanEdit = !!me.canEdit;
     currentVorname = me.vorname || null;
     currentNachname = me.nachname || null;
     currentMannschaften = Array.isArray(me.mannschaften) ? me.mannschaften : [];
     appData = normalizeAppData(data);
-    document.getElementById("nav-verwaltung").style.display = currentIsAdmin ? "" : "none";
+    document.getElementById("nav-verwaltung").style.display = canEdit() ? "" : "none";
     startApp();
     renderHeaderUser();
     renderMannschaftField();
     renderMeineMeldungen();
-    if (currentIsAdmin) {
+    if (canEdit()) {
       renderAdminMeldungen();
     }
   } catch (e) {
