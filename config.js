@@ -2,17 +2,6 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
-    version: "1.1",
-    groups: [
-      {
-        title: "Bearbeiten-Recht",
-        items: [
-          "Annehmen/Ablehnen/Als gekauft markieren/Löschen fremder Meldungen jetzt an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt, nicht mehr an Admin-Status allein."
-        ]
-      }
-    ]
-  },
-  {
     version: "1.0",
     groups: [
       {
@@ -24,8 +13,9 @@ const APP_CHANGELOG = [
         ]
       },
       {
-        title: "Verwaltung (nur Admins)",
+        title: "Verwaltung (Admin/Bearbeiter)",
         items: [
+          "Annehmen/Ablehnen/Als gekauft markieren sowie Löschen fremder Meldungen sind an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt, nicht an Admin-Status allein.",
           "Alle Meldungen im Überblick, filterbar nach Status (Offen/Angenommen/Abgelehnt/Gekauft).",
           "Meldungen annehmen oder ablehnen, angenommene als gekauft markieren, dazu ein Admin-Kommentar je Meldung.",
           "Export als Text- oder PDF-Datei, passend zum aktuell gewählten Status-Filter."
