@@ -39,6 +39,7 @@
 <div id="app-shell" style="display:none;">
   <nav>
     <button data-tab="meldung" class="active">Bedarf melden</button>
+    <button data-tab="info">Info</button>
     <button data-tab="verwaltung" id="nav-verwaltung" style="display:none; margin-left:auto;">Verwaltung</button>
   </nav>
   <main>
@@ -89,11 +90,19 @@
         </div>
       </div>
 
-      <div class="card" id="changelog-panel">
-        <h3>Versionshistorie <span class="version-badge" id="version-badge-2"></span></h3>
+
+    </section>
+
+    <!-- ---------- Info ---------- -->
+    <section class="tab-section" id="tab-info">
+      <div class="card">
+        <h2>Über den Materialbedarf <span class="version-badge" id="version-badge-2"></span></h2>
+        <p class="muted">Benötigtes Material melden — die Verwaltung entscheidet und verfolgt den Stand.</p>
+      </div>
+      <div class="card">
+        <h2>Änderungen</h2>
         <div id="changelog-list"></div>
       </div>
-
     </section>
 
     <section class="tab-section" id="tab-verwaltung">
@@ -134,6 +143,6 @@
 
 <script src="config.js?v=1.0"></script>
 <script src="db.js?v=1.0"></script>
-<script src="app.js?v=1.0"></script>
+<script src="app.js?v=1.1"></script>
 </body>
 </html>
