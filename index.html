@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>🛒 Materialbedarf</title>
 <meta name="theme-color" content="#1a56a0" />
-<link rel="stylesheet" href="style.css?v=1.1" />
+<link rel="stylesheet" href="style.css?v=1.2" />
 </head>
 <body>
 
@@ -40,6 +40,7 @@
   <nav>
     <button data-tab="meldung" class="active">Bedarf melden</button>
     <div class="nav-right">
+      <button data-tab="bearbeitet" id="nav-bearbeitet" style="display:none;">Bearbeitet</button>
       <button data-tab="verwaltung" id="nav-verwaltung" style="display:none;">Verwaltung</button>
       <button data-tab="info">Info</button>
     </div>
@@ -111,16 +112,10 @@
 
       <div class="card">
         <div class="card-header-row">
-          <h2>Meldungen verwalten</h2>
-          <select id="admin-status-filter">
-            <option value="alle">Alle</option>
-            <option value="offen">Offen</option>
-            <option value="angenommen">Angenommen</option>
-            <option value="abgelehnt">Abgelehnt</option>
-            <option value="gekauft">Gekauft/Erledigt</option>
-          </select>
+          <h2>Offene Meldungen</h2>
         </div>
-        <div class="empty-state" id="verwaltung-empty" style="display:none;">Keine Meldungen für diesen Filter.</div>
+        <p class="muted">Noch nicht entschiedene Meldungen. Angenommene, abgelehnte und gekaufte stehen im Tab „Bearbeitet“.</p>
+        <div class="empty-state" id="verwaltung-empty" style="display:none;">Keine offenen Meldungen.</div>
         <div id="verwaltung-rows"></div>
       </div>
 
@@ -128,10 +123,40 @@
         <div class="card-header-row">
           <h2>Export</h2>
         </div>
-        <p class="muted">Export der aktuell gefilterten Meldungen (siehe Filter oben).</p>
+        <p class="muted">Export der offenen Meldungen.</p>
         <div class="btn-row" style="justify-content:flex-start;">
           <button type="button" class="btn secondary" id="btn-export-text">Export als Text</button>
           <button type="button" class="btn secondary" id="btn-export-pdf">Export als PDF</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ---------- Bearbeitet (entschiedene Meldungen) ---------- -->
+    <section class="tab-section" id="tab-bearbeitet">
+
+      <div class="card">
+        <div class="card-header-row">
+          <h2>Bearbeitete Meldungen</h2>
+          <select id="bearbeitet-status-filter">
+            <option value="alle">Alle bearbeiteten</option>
+            <option value="angenommen">Angenommen</option>
+            <option value="abgelehnt">Abgelehnt</option>
+            <option value="gekauft">Gekauft/Erledigt</option>
+          </select>
+        </div>
+        <div class="empty-state" id="bearbeitet-empty" style="display:none;">Keine bearbeiteten Meldungen für diesen Filter.</div>
+        <div id="bearbeitet-rows"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header-row">
+          <h2>Export</h2>
+        </div>
+        <p class="muted">Export der bearbeiteten Meldungen, passend zum Filter oben.</p>
+        <div class="btn-row" style="justify-content:flex-start;">
+          <button type="button" class="btn secondary" id="btn-export-bearbeitet-text">Export als Text</button>
+          <button type="button" class="btn secondary" id="btn-export-bearbeitet-pdf">Export als PDF</button>
         </div>
       </div>
 
@@ -143,8 +168,8 @@
 <!-- Druckbereich (nur für PDF-Export sichtbar) -->
 <div id="print-area"><div id="print-content"></div></div>
 
-<script src="config.js?v=1.0"></script>
+<script src="config.js?v=1.1"></script>
 <script src="db.js?v=1.0"></script>
-<script src="app.js?v=1.1"></script>
+<script src="app.js?v=1.2"></script>
 </body>
 </html>

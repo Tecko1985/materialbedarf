@@ -2,6 +2,20 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
+    version: "1.1",
+    groups: [
+      {
+        title: "Offene und bearbeitete Meldungen getrennt",
+        items: [
+          "Der Tab „Verwaltung“ zeigt jetzt ausschließlich die offenen Meldungen — was noch zu entscheiden ist, steht sofort im Blick.",
+          "Angenommene, abgelehnte und gekaufte Meldungen stehen im neuen Tab „Bearbeitet“, dort weiterhin nach Status filterbar.",
+          "Angenommene Meldungen lassen sich auch im neuen Tab als gekauft markieren; Admin-Kommentar und Löschen bleiben in beiden Tabs verfügbar.",
+          "Export gibt es in beiden Tabs — jeweils genau die Meldungen, die dort gerade angezeigt werden."
+        ]
+      }
+    ]
+  },
+  {
     version: "1.0",
     groups: [
       {

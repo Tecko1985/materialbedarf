@@ -7,7 +7,8 @@ let currentNachname = null;
 let currentMannschaften = [];
 
 function canEdit() { return currentIsAdmin || currentCanEdit; }
-let currentStatusFilter = "alle";
+// Filter nur noch im Tab "Bearbeitet" — der Verwaltung-Tab zeigt ausschliesslich offene Meldungen.
+let currentBearbeitetFilter = "alle";
 let positionRowSeq = 0;
 
 const MELDUNG_STATUS = [
@@ -294,22 +295,32 @@ async function withdrawMeldung(id) {
 
 // ---------- Verwaltung (Admin) ----------
 
-function filteredMeldungen() {
-  const list = currentStatusFilter === "alle"
-    ? appData.meldungen
-    : appData.meldungen.filter((m) => m.status === currentStatusFilter);
+function sortedByErstelltDesc(list) {
   return list.slice().sort((a, b) => (b.erstelltAm || "").localeCompare(a.erstelltAm || ""));
 }
 
-function statusFilterLabel() {
-  return currentStatusFilter === "alle" ? "Alle" : statusLabel(currentStatusFilter);
+// Die beiden Listen sind komplementaer: was hier fehlt, steht im jeweils anderen Tab.
+// "offen" ist der einzige noch nicht entschiedene Status (siehe MELDUNG_STATUS).
+function offeneMeldungen() {
+  return sortedByErstelltDesc(appData.meldungen.filter((m) => m.status === "offen"));
 }
 
-function renderAdminMeldungen() {
-  const list = filteredMeldungen();
-  const container = document.getElementById("verwaltung-rows");
-  document.getElementById("verwaltung-empty").style.display = list.length ? "none" : "block";
-  container.innerHTML = list.map((m) => `
+function bearbeiteteMeldungen() {
+  const list = appData.meldungen.filter((m) => m.status !== "offen");
+  return sortedByErstelltDesc(currentBearbeitetFilter === "alle"
+    ? list
+    : list.filter((m) => m.status === currentBearbeitetFilter));
+}
+
+function bearbeitetFilterLabel() {
+  return currentBearbeitetFilter === "alle" ? "Alle bearbeiteten" : statusLabel(currentBearbeitetFilter);
+}
+
+// Ein Markup fuer beide Tabs — welche Aktionen erscheinen, haengt allein am Status der
+// Meldung, nicht am Tab. Damit bleibt "Als gekauft markieren" bei angenommenen Meldungen
+// erreichbar, obwohl die im Tab "Bearbeitet" stehen.
+function adminMeldungRowHtml(m) {
+  return `
     <div class="meldung-row" data-id="${escapeHtml(m.id)}">
       <div class="meldung-row-main">
         <div class="meldung-datum muted">${escapeHtml(fmtDate(m.erstelltAm))} · ${escapeHtml(trainerName(m))}${m.mannschaft ? " · " + escapeHtml(m.mannschaft) : ""}</div>
@@ -331,8 +342,19 @@ function renderAdminMeldungen() {
         ${m.status === "angenommen" ? `<button type="button" class="btn small btn-gekauft">Als gekauft markieren</button>` : ""}
         <button type="button" class="btn secondary small btn-delete-meldung">Löschen</button>
       </div>
-    </div>
-  `).join("");
+    </div>`;
+}
+
+function renderMeldungList(list, rowsId, emptyId) {
+  document.getElementById(emptyId).style.display = list.length ? "none" : "block";
+  document.getElementById(rowsId).innerHTML = list.map(adminMeldungRowHtml).join("");
+}
+
+// Immer beide Listen: jede Entscheidung laesst eine Meldung von der einen in die andere
+// wandern, ein Neurendern nur des aktiven Tabs liesse die andere veraltet zurueck.
+function renderAdminMeldungen() {
+  renderMeldungList(offeneMeldungen(), "verwaltung-rows", "verwaltung-empty");
+  renderMeldungList(bearbeiteteMeldungen(), "bearbeitet-rows", "bearbeitet-empty");
 }
 
 async function entscheideMeldung(id, entscheidung, adminKommentar) {
@@ -371,9 +393,10 @@ async function deleteMeldungAdmin(id) {
 
 // ---------- Export ----------
 
-function exportText() {
-  const zeilen = filteredMeldungen();
-  if (!zeilen.length) { alert("Keine Meldungen für den aktuellen Filter vorhanden."); return; }
+// zeilen/titel kommen vom aufrufenden Tab — exportiert wird immer genau das, was dort
+// gerade sichtbar ist.
+function exportText(zeilen, titel, dateiSlug) {
+  if (!zeilen.length) { alert("Keine Meldungen zum Exportieren vorhanden."); return; }
   const fields = [
     { label: "Datum", key: "datum" },
     { label: "Trainer", key: "trainer" },
@@ -397,16 +420,15 @@ function exportText() {
   const widths = fields.map((f) => Math.max(f.label.length, ...rows.map((r) => String(r[f.key]).length)));
   const line = (cells) => cells.map((c, i) => String(c).padEnd(widths[i])).join("  ");
   const sepLine = widths.map((w) => "-".repeat(w)).join("  ");
-  let out = `Materialbedarf — Meldungen (Filter: ${statusFilterLabel()})\n`;
+  let out = `Materialbedarf — Meldungen (${titel})\n`;
   out += `Erstellt am ${new Date().toLocaleString("de-DE")}\n\n`;
   out += line(fields.map((f) => f.label)) + "\n" + sepLine + "\n";
   out += rows.map((r) => line(fields.map((f) => r[f.key]))).join("\n") + "\n";
-  download(`materialbedarf_${localDateIso()}.txt`, "text/plain", "﻿" + out);
+  download(`materialbedarf_${dateiSlug}_${localDateIso()}.txt`, "text/plain", "﻿" + out);
 }
 
-function exportPdf() {
-  const zeilen = filteredMeldungen();
-  if (!zeilen.length) { alert("Keine Meldungen für den aktuellen Filter vorhanden."); return; }
+function exportPdf(zeilen, titel) {
+  if (!zeilen.length) { alert("Keine Meldungen zum Exportieren vorhanden."); return; }
   const theadHtml = `<tr><th>Datum</th><th>Trainer</th><th>Mannschaft</th><th>Material</th><th>Grund</th><th>Dringlichkeit</th><th>Status</th><th>Kommentar</th></tr>`;
   const rowsHtml = zeilen.map((m) => `
     <tr>
@@ -421,7 +443,7 @@ function exportPdf() {
     </tr>`).join("");
   document.getElementById("print-content").innerHTML = `
     <h1>🛒 Materialbedarf</h1>
-    <p class="print-meta">Meldungen (Filter: ${escapeHtml(statusFilterLabel())}) — erstellt am ${new Date().toLocaleString("de-DE")}</p>
+    <p class="print-meta">Meldungen (${escapeHtml(titel)}) — erstellt am ${new Date().toLocaleString("de-DE")}</p>
     <table class="print-table">
       <thead>${theadHtml}</thead>
       <tbody>${rowsHtml}</tbody>
@@ -467,11 +489,11 @@ async function init() {
     if (btn) withdrawMeldung(btn.dataset.id);
   });
 
-  document.getElementById("admin-status-filter").addEventListener("change", (e) => {
-    currentStatusFilter = e.target.value;
+  document.getElementById("bearbeitet-status-filter").addEventListener("change", (e) => {
+    currentBearbeitetFilter = e.target.value;
     renderAdminMeldungen();
   });
-  document.getElementById("verwaltung-rows").addEventListener("click", (e) => {
+  const onMeldungAction = (e) => {
     const row = e.target.closest(".meldung-row");
     if (!row) return;
     const id = row.dataset.id;
@@ -481,9 +503,17 @@ async function init() {
     else if (e.target.closest(".btn-ablehnen")) entscheideMeldung(id, "abgelehnt", kommentar);
     else if (e.target.closest(".btn-gekauft")) alsGekauftMarkieren(id, kommentar);
     else if (e.target.closest(".btn-delete-meldung")) deleteMeldungAdmin(id);
-  });
-  document.getElementById("btn-export-text").addEventListener("click", exportText);
-  document.getElementById("btn-export-pdf").addEventListener("click", exportPdf);
+  };
+  document.getElementById("verwaltung-rows").addEventListener("click", onMeldungAction);
+  document.getElementById("bearbeitet-rows").addEventListener("click", onMeldungAction);
+  document.getElementById("btn-export-text")
+    .addEventListener("click", () => exportText(offeneMeldungen(), "Offen", "offen"));
+  document.getElementById("btn-export-pdf")
+    .addEventListener("click", () => exportPdf(offeneMeldungen(), "Offen"));
+  document.getElementById("btn-export-bearbeitet-text")
+    .addEventListener("click", () => exportText(bearbeiteteMeldungen(), bearbeitetFilterLabel(), "bearbeitet"));
+  document.getElementById("btn-export-bearbeitet-pdf")
+    .addEventListener("click", () => exportPdf(bearbeiteteMeldungen(), bearbeitetFilterLabel()));
 
   if (!getSessionToken()) {
     showConnectScreen();
@@ -503,6 +533,7 @@ async function init() {
     currentMannschaften = Array.isArray(me.mannschaften) ? me.mannschaften : [];
     appData = normalizeAppData(data);
     document.getElementById("nav-verwaltung").style.display = canEdit() ? "" : "none";
+    document.getElementById("nav-bearbeitet").style.display = canEdit() ? "" : "none";
     startApp();
     renderHeaderUser();
     renderMannschaftField();
