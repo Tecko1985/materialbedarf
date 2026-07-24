@@ -10,7 +10,8 @@ const APP_CHANGELOG = [
           "Der Tab „Verwaltung“ zeigt jetzt ausschließlich die offenen Meldungen — was noch zu entscheiden ist, steht sofort im Blick.",
           "Angenommene, abgelehnte und gekaufte Meldungen stehen im neuen Tab „Bearbeitet“, dort weiterhin nach Status filterbar.",
           "Angenommene Meldungen lassen sich auch im neuen Tab als gekauft markieren; Admin-Kommentar und Löschen bleiben in beiden Tabs verfügbar.",
-          "Export gibt es in beiden Tabs — jeweils genau die Meldungen, die dort gerade angezeigt werden."
+          "Export gibt es in beiden Tabs — jeweils genau die Meldungen, die dort gerade angezeigt werden.",
+          "Wer das Tool nur sehen darf (kein Bearbeiten-Recht), sieht das Melde-Formular nicht mehr und kann keine Meldungen anlegen — Bedarf melden setzt jetzt Bearbeiten-Recht voraus (auch serverseitig)."
         ]
       }
     ]

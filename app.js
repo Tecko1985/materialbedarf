@@ -537,6 +537,12 @@ async function init() {
     appData = normalizeAppData(data);
     document.getElementById("nav-verwaltung").style.display = canEdit() ? "" : "none";
     document.getElementById("nav-bearbeitet").style.display = canEdit() ? "" : "none";
+    // Nur-Seher: Bedarf melden ist jetzt Bearbeitern vorbehalten (Sehen = absolut nichts
+    // editierbar, 2026-07-24 2. Runde) -- Melden-Formular komplett ausblenden. Serverseitig
+    // ist der Schreibweg ohnehin gesperrt (materialbedarf in WRITE_REQUIRES_EDIT_PERMISSION).
+    const meldenBtn = document.getElementById("btn-submit");
+    const meldenCard = meldenBtn ? meldenBtn.closest(".card") : null;
+    if (meldenCard) meldenCard.style.display = canEdit() ? "" : "none";
     startApp();
     renderHeaderUser();
     renderMannschaftField();
