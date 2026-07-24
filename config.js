@@ -2,6 +2,18 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
+    version: "1.2",
+    groups: [
+      {
+        title: "Klare Trennung Bearbeiten / Verwalten",
+        items: [
+          "Bedarf melden (linker Tab) ist die Bearbeiter-Ebene; das Entscheiden und Verwalten der Meldungen (Tabs „Verwaltung“ und „Bearbeitet“) ist jetzt Administratoren vorbehalten. Wer nur Bearbeiten-Recht hat, meldet Bedarf, sieht die Verwaltungs-Tabs aber nicht mehr.",
+          "Der Info-Tab bleibt immer für alle sichtbar."
+        ]
+      }
+    ]
+  },
+  {
     version: "1.1",
     groups: [
       {

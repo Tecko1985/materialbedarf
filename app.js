@@ -2,11 +2,15 @@ let appData = { meldungen: [] };
 let currentUsername = null;
 let currentIsAdmin = false;
 let currentCanEdit = false;
+let currentCanAdmin = false;
 let currentVorname = null;
 let currentNachname = null;
 let currentMannschaften = [];
 
 function canEdit() { return currentIsAdmin || currentCanEdit; }
+// Administrieren-Ebene: das Entscheiden/Verwalten der Meldungen (rechte Tabs) ist
+// Administratoren vorbehalten; der Bearbeiter meldet nur (linker Tab). (2026-07-24)
+function canAdmin() { return currentIsAdmin || currentCanAdmin; }
 // Filter nur noch im Tab "Bearbeitet" — der Verwaltung-Tab zeigt ausschliesslich offene Meldungen.
 let currentBearbeitetFilter = "alle";
 let positionRowSeq = 0;
@@ -358,7 +362,7 @@ function renderAdminMeldungen() {
 }
 
 async function entscheideMeldung(id, entscheidung, adminKommentar) {
-  if (!canEdit()) return;
+  if (!canAdmin()) return;
   await saveWithConflictRetry((data) => {
     const m = data.meldungen.find((x) => x.id === id);
     if (!m || m.status !== "offen") return;
@@ -371,7 +375,7 @@ async function entscheideMeldung(id, entscheidung, adminKommentar) {
 }
 
 async function alsGekauftMarkieren(id, adminKommentar) {
-  if (!canEdit()) return;
+  if (!canAdmin()) return;
   await saveWithConflictRetry((data) => {
     const m = data.meldungen.find((x) => x.id === id);
     if (!m || m.status !== "angenommen") return;
@@ -383,7 +387,7 @@ async function alsGekauftMarkieren(id, adminKommentar) {
 }
 
 async function deleteMeldungAdmin(id) {
-  if (!canEdit()) return;
+  if (!canAdmin()) return;
   if (!confirm("Diese Meldung wirklich endgültig löschen?")) return;
   await saveWithConflictRetry((data) => {
     data.meldungen = data.meldungen.filter((m) => m.id !== id);
@@ -531,12 +535,15 @@ async function init() {
     currentUsername = me.username;
     currentIsAdmin = !!me.isAdmin;
     currentCanEdit = !!me.canEdit;
+    currentCanAdmin = !!me.canAdmin;
     currentVorname = me.vorname || null;
     currentNachname = me.nachname || null;
     currentMannschaften = Array.isArray(me.mannschaften) ? me.mannschaften : [];
     appData = normalizeAppData(data);
-    document.getElementById("nav-verwaltung").style.display = canEdit() ? "" : "none";
-    document.getElementById("nav-bearbeitet").style.display = canEdit() ? "" : "none";
+    // Rechte Nav-Tabs (Verwaltung/Bearbeitet) = Administrieren-Ebene (2026-07-24): der
+    // Bearbeiter meldet nur (linker Tab), das Entscheiden/Verwalten ist Admins vorbehalten.
+    document.getElementById("nav-verwaltung").style.display = canAdmin() ? "" : "none";
+    document.getElementById("nav-bearbeitet").style.display = canAdmin() ? "" : "none";
     // Nur-Seher: Bedarf melden ist jetzt Bearbeitern vorbehalten (Sehen = absolut nichts
     // editierbar, 2026-07-24 2. Runde) -- Melden-Formular komplett ausblenden. Serverseitig
     // ist der Schreibweg ohnehin gesperrt (materialbedarf in WRITE_REQUIRES_EDIT_PERMISSION).
@@ -547,7 +554,7 @@ async function init() {
     renderHeaderUser();
     renderMannschaftField();
     renderMeineMeldungen();
-    if (canEdit()) {
+    if (canAdmin()) {
       renderAdminMeldungen();
     }
   } catch (e) {
