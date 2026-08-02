@@ -2,62 +2,47 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
-    version: "1.3",
-    groups: [
-      {
-        title: "Bedienung am Handy",
-        items: [
-          "Die Tab-Leiste bricht am Handy jetzt um, statt seitlich aus dem Bild zu laufen. Vorher waren die hinteren Tabs auf schmalen Bildschirmen nicht erreichbar.",
-          "Eingabefelder sind am Handy mindestens 16 Pixel groß. Dadurch zoomt der iPhone-Browser beim Antippen eines Feldes nicht mehr ungefragt in die Seite hinein und bleibt danach verschoben stehen."
-        ]
-      }
-    ]
-  },
-  {
-    version: "1.2",
-    groups: [
-      {
-        title: "Klare Trennung Bearbeiten / Verwalten",
-        items: [
-          "Bedarf melden (linker Tab) ist die Bearbeiter-Ebene; das Entscheiden und Verwalten der Meldungen (Tabs „Verwaltung“ und „Bearbeitet“) ist jetzt Administratoren vorbehalten. Wer nur Bearbeiten-Recht hat, meldet Bedarf, sieht die Verwaltungs-Tabs aber nicht mehr.",
-          "Der Info-Tab bleibt immer für alle sichtbar."
-        ]
-      }
-    ]
-  },
-  {
-    version: "1.1",
-    groups: [
-      {
-        title: "Offene und bearbeitete Meldungen getrennt",
-        items: [
-          "Der Tab „Verwaltung“ zeigt jetzt ausschließlich die offenen Meldungen — was noch zu entscheiden ist, steht sofort im Blick.",
-          "Angenommene, abgelehnte und gekaufte Meldungen stehen im neuen Tab „Bearbeitet“, dort weiterhin nach Status filterbar.",
-          "Angenommene Meldungen lassen sich auch im neuen Tab als gekauft markieren; Admin-Kommentar und Löschen bleiben in beiden Tabs verfügbar.",
-          "Export gibt es in beiden Tabs — jeweils genau die Meldungen, die dort gerade angezeigt werden.",
-          "Wer das Tool nur sehen darf (kein Bearbeiten-Recht), sieht das Melde-Formular nicht mehr und kann keine Meldungen anlegen — Bedarf melden setzt jetzt Bearbeiten-Recht voraus (auch serverseitig)."
-        ]
-      }
-    ]
-  },
-  {
     version: "1.0",
     groups: [
       {
         title: "Bedarf melden",
         items: [
-          "Trainer:innen melden Materialbedarf mit einer oder mehreren Positionen (Material + Menge), Grund/Verwendungszweck und Dringlichkeit (normal/dringend).",
-          "Eigene Meldungen bleiben unter „Meine Meldungen“ mit aktuellem Status sichtbar; noch offene Meldungen können zurückgezogen werden.",
-          "Anmeldung & Speicherung über die zentrale Anmeldung (Tools-Übersicht) — kein separates Passwort auf diesem Gerät nötig."
+          "Trainerinnen und Trainer melden Materialbedarf mit einer oder mehreren Positionen aus Material und Menge, dazu Grund oder Verwendungszweck und die Dringlichkeit — normal oder dringend.",
+          "Die eigenen Meldungen bleiben unter „Meine Meldungen“ mit ihrem aktuellen Stand sichtbar.",
+          "Eine noch offene Meldung lässt sich zurückziehen."
         ]
       },
       {
-        title: "Verwaltung (Admin/Bearbeiter)",
+        title: "Entscheiden",
         items: [
-          "Annehmen/Ablehnen/Als gekauft markieren sowie Löschen fremder Meldungen sind an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt, nicht an Admin-Status allein.",
-          "Alle Meldungen im Überblick, filterbar nach Status (Offen/Angenommen/Abgelehnt/Gekauft).",
-          "Meldungen annehmen oder ablehnen, angenommene als gekauft markieren, dazu ein Admin-Kommentar je Meldung.",
-          "Export als Text- oder PDF-Datei, passend zum aktuell gewählten Status-Filter."
+          "Der Reiter „Verwaltung“ zeigt ausschließlich die offenen Meldungen — was noch zu entscheiden ist, steht sofort im Blick.",
+          "Angenommene, abgelehnte und gekaufte Meldungen stehen im Reiter „Bearbeitet“ und sind dort nach Status filterbar.",
+          "Eine angenommene Meldung lässt sich als gekauft markieren, in beiden Reitern.",
+          "Zu jeder Meldung kann ein Kommentar hinterlegt werden.",
+          "Beide Reiter haben einen Export als Text oder PDF — jeweils genau die Meldungen, die gerade angezeigt werden."
+        ]
+      },
+      {
+        title: "Wer darf was",
+        items: [
+          "Sehen: die eigenen Meldungen. Das Melde-Formular erscheint nicht, eine Meldung anlegen geht nicht — auch nicht am Bildschirm vorbei.",
+          "Bearbeiten: Bedarf melden und eigene offene Meldungen zurückziehen.",
+          "Administrieren: annehmen, ablehnen, als gekauft markieren, kommentieren, fremde Meldungen löschen und exportieren. Die Reiter „Verwaltung“ und „Bearbeitet“ sind nur auf dieser Stufe sichtbar.",
+          "Die Trennung ist Absicht: Bedarf melden ist die tägliche Arbeit, über Geld entscheiden ist es nicht.",
+          "Der Reiter „Info“ ist für alle sichtbar."
+        ]
+      },
+      {
+        title: "Bedienung am Handy",
+        items: [
+          "Die Reiterleiste bricht am Handy um, statt seitlich aus dem Bild zu laufen — auch die hinteren Reiter sind auf schmalen Bildschirmen erreichbar.",
+          "Eingabefelder sind mindestens 16 Pixel groß, damit der iPhone-Browser beim Antippen nicht ungefragt in die Seite hineinzoomt und verschoben stehen bleibt."
+        ]
+      },
+      {
+        title: "Daten & Speicherung",
+        items: [
+          "Gespeichert wird in der Vereins-Nextcloud über die zentrale Anmeldung der Tools-Übersicht — ein eigenes Passwort braucht es nicht."
         ]
       }
     ]
