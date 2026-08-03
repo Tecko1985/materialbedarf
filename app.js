@@ -220,6 +220,7 @@ async function submitMeldung() {
       gekauftAm: null
     };
     await saveWithConflictRetry((data) => { data.meldungen.push(ticket); });
+    await pushVorgang("neu", ticket.id);
     resetMeldungForm();
     renderMeineMeldungen();
   } catch (e) {
@@ -353,16 +354,39 @@ function renderAdminMeldungen() {
   renderMeldungList(bearbeiteteMeldungen(), "bearbeitet-rows", "bearbeitet-empty");
 }
 
+// ---------- Benachrichtigung (seit 2026-08-03) ----------
+// Der Empfänger wird SERVERSEITIG bestimmt: bei "neu" die Entscheidenden, bei
+// "entschieden" der Melder aus dem Datensatz. Diese App schickt bewusst keinen
+// Nutzernamen mit — sonst könnte ein Bearbeiter beliebige Leute benachrichtigen
+// lassen, und ein Tippfehler liefe unbemerkt ins Leere.
+async function pushVorgang(art, id) {
+  try {
+    await gatewayRequest({ action: "vorgang-push", app: GATEWAY_APP_ID, art, id });
+  } catch (e) {
+    // Best-effort: die Meldung ist gespeichert, eine misslungene
+    // Benachrichtigung darf sie nicht als Fehler erscheinen lassen.
+    console.warn("Benachrichtigung fehlgeschlagen", e);
+  }
+}
+
 async function entscheideMeldung(id, entscheidung, adminKommentar) {
   if (!canAdmin()) return;
+  // ⚠️ Das mutate-Closure kann still nichts tun, wenn die Meldung inzwischen
+  // schon entschieden wurde. Ohne dieses Flag ginge eine Benachrichtigung raus,
+  // obwohl nichts passiert ist. Zurückgesetzt IM Closure, weil der
+  // Konflikt-Retry es ein zweites Mal ausführt.
+  let entschieden = false;
   await saveWithConflictRetry((data) => {
+    entschieden = false;
     const m = data.meldungen.find((x) => x.id === id);
     if (!m || m.status !== "offen") return;
     m.status = entscheidung;
     m.entschiedenAm = new Date().toISOString();
     m.entschiedenVon = currentUsername;
     if (adminKommentar !== undefined) m.adminKommentar = adminKommentar;
+    entschieden = true;
   });
+  if (entschieden) await pushVorgang("entschieden", id);
   renderAdminMeldungen();
 }
 

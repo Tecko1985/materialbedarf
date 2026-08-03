@@ -2,6 +2,21 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
+    version: "1.1",
+    groups: [
+      {
+        title: "Benachrichtigung aufs Handy",
+        items: [
+          "Eine neue Meldung erreicht die Zuständigen jetzt direkt aufs Handy — bisher blieb sie liegen, bis jemand von sich aus nachsah.",
+          "Ist über eine Meldung entschieden worden, bekommt die meldende Person eine Nachricht.",
+          "Die Nachricht nennt weder den gemeldeten Bedarf noch das Ergebnis — sie steht auf dem Sperrbildschirm. Was entschieden wurde, sieht man nach dem Antippen.",
+          "Eingeschaltet wird das in der Tools-Übersicht unter „Mein Konto“, einzeln für dieses Werkzeug. Wer es nicht einschaltet, merkt keinen Unterschied.",
+          "Wurde eine Meldung zwischenzeitlich schon von jemand anderem entschieden, geht keine zweite Nachricht raus."
+        ]
+      }
+    ]
+  },
+  {
     version: "1.0",
     groups: [
       {
