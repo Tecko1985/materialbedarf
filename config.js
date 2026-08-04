@@ -2,21 +2,6 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
-    version: "1.1",
-    groups: [
-      {
-        title: "Benachrichtigung aufs Handy",
-        items: [
-          "Eine neue Meldung erreicht die Zuständigen jetzt direkt aufs Handy — bisher blieb sie liegen, bis jemand von sich aus nachsah.",
-          "Ist über eine Meldung entschieden worden, bekommt die meldende Person eine Nachricht.",
-          "Die Nachricht nennt weder den gemeldeten Bedarf noch das Ergebnis — sie steht auf dem Sperrbildschirm. Was entschieden wurde, sieht man nach dem Antippen.",
-          "Eingeschaltet wird das in der Tools-Übersicht unter „Mein Konto“, einzeln für dieses Werkzeug. Wer es nicht einschaltet, merkt keinen Unterschied.",
-          "Wurde eine Meldung zwischenzeitlich schon von jemand anderem entschieden, geht keine zweite Nachricht raus."
-        ]
-      }
-    ]
-  },
-  {
     version: "1.0",
     groups: [
       {
@@ -35,6 +20,16 @@ const APP_CHANGELOG = [
           "Eine angenommene Meldung lässt sich als gekauft markieren, in beiden Reitern.",
           "Zu jeder Meldung kann ein Kommentar hinterlegt werden.",
           "Beide Reiter haben einen Export als Text oder PDF — jeweils genau die Meldungen, die gerade angezeigt werden."
+        ]
+      },
+      {
+        title: "Benachrichtigung aufs Handy",
+        items: [
+          "Eine neue Meldung erreicht die Zuständigen direkt aufs Handy, statt liegen zu bleiben, bis jemand von sich aus nachsieht.",
+          "Ist über eine Meldung entschieden worden, bekommt die meldende Person eine Nachricht.",
+          "Die Nachricht nennt weder den gemeldeten Bedarf noch das Ergebnis — sie steht auf dem Sperrbildschirm. Was entschieden wurde, sieht man nach dem Antippen.",
+          "Eingeschaltet wird das in der Tools-Übersicht unter „Mein Konto“, einzeln für dieses Werkzeug. Wer es nicht einschaltet, merkt keinen Unterschied.",
+          "Wurde eine Meldung zwischenzeitlich schon von jemand anderem entschieden, geht keine zweite Nachricht raus."
         ]
       },
       {
