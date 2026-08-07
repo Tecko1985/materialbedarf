@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>🛒 Materialbedarf</title>
 <meta name="theme-color" content="#1a56a0" />
-<link rel="stylesheet" href="style.css?v=1.4" />
+<link rel="stylesheet" href="style.css?v=1.5" />
 </head>
 <body>
 
@@ -135,7 +135,7 @@
         <div class="card-header-row">
           <h2>Offene Meldungen</h2>
         </div>
-        <p class="muted">Noch nicht entschiedene Meldungen. Angenommene, abgelehnte und gekaufte stehen im Tab „Bearbeitet“.</p>
+        <p class="muted">Noch nicht entschiedene Meldungen. Angenommene, abgelehnte, bestellte und verteilte stehen im Tab „Bearbeitet“.</p>
         <div class="empty-state" id="verwaltung-empty" style="display:none;">Keine offenen Meldungen.</div>
         <div id="verwaltung-rows"></div>
       </div>
@@ -163,7 +163,8 @@
             <option value="alle">Alle bearbeiteten</option>
             <option value="angenommen">Angenommen</option>
             <option value="abgelehnt">Abgelehnt</option>
-            <option value="gekauft">Gekauft/Erledigt</option>
+            <option value="bestellt">Bestellt</option>
+            <option value="verteilt">Verteilt</option>
           </select>
         </div>
         <div class="empty-state" id="bearbeitet-empty" style="display:none;">Keine bearbeiteten Meldungen für diesen Filter.</div>
@@ -189,8 +190,8 @@
 <!-- Druckbereich (nur für PDF-Export sichtbar) -->
 <div id="print-area"><div id="print-content"></div></div>
 
-<script src="config.js?v=1.7"></script>
+<script src="config.js?v=1.8"></script>
 <script src="db.js?v=1.1"></script>
-<script src="app.js?v=1.7"></script>
+<script src="app.js?v=1.8"></script>
 </body>
 </html>

@@ -235,7 +235,9 @@ button.btn:disabled { opacity: 0.6; cursor: default; }
 .status-badge.status-offen { background: var(--gold-light); color: var(--gold); }
 .status-badge.status-angenommen { background: var(--green-light); color: var(--green); }
 .status-badge.status-abgelehnt { background: var(--red-light); color: var(--red); }
-.status-badge.status-gekauft { background: var(--blue-light); color: var(--blue); }
+.status-badge.status-bestellt { background: var(--blue-light); color: var(--blue); }
+/* Endzustand deutlich abgesetzt: verteilt = abgeschlossen, danach passiert nichts mehr. */
+.status-badge.status-verteilt { background: var(--green); color: var(--white); }
 
 /* ---------- Druckansicht (PDF-Export via window.print) ---------- */
 

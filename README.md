@@ -1,6 +1,6 @@
 # 🛒 Materialbedarf
 
-Trainer:innen melden Materialbedarf (z.B. neue Bälle, Erste-Hilfe-Set) an den Verein; Admin entscheidet über Annahme/Ablehnung und markiert den Kauf.
+Trainer:innen melden Materialbedarf (z.B. neue Bälle, Erste-Hilfe-Set) an den Verein; Admin entscheidet über Annahme/Ablehnung und verfolgt danach Bestellung und Verteilung.
 
 **➡️ [Materialbedarf öffnen](https://sc1911heiligenstadt.github.io/materialbedarf/)**
 

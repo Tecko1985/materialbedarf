@@ -19,7 +19,8 @@ const MELDUNG_STATUS = [
   { id: "offen", label: "Offen" },
   { id: "angenommen", label: "Angenommen" },
   { id: "abgelehnt", label: "Abgelehnt" },
-  { id: "gekauft", label: "Gekauft/Erledigt" }
+  { id: "bestellt", label: "Bestellt" },
+  { id: "verteilt", label: "Verteilt" }
 ];
 
 function escapeHtml(s) {
@@ -64,7 +65,23 @@ function deriveNameFromUsername(username) {
 function normalizeAppData(data) {
   const d = data && typeof data === "object" ? data : {};
   if (!Array.isArray(d.meldungen)) d.meldungen = [];
+  migrateGekauft(d.meldungen);
   return d;
+}
+
+// Altbestand: bis 2026-08-07 war "gekauft" der Endzustand. Seit der Aufteilung in
+// "bestellt" -> "verteilt" ist der Kauf nur noch der vorletzte Schritt, deshalb wandern
+// die Altdaten auf "bestellt" (User-Entscheidung: die zuletzt gekauften Posten waren
+// laut Kommentaren tatsaechlich bestellt, aber noch nicht verteilt).
+// Idempotent — laeuft auch nach dem Konflikt-Reload erneut ueber dieselben Daten.
+// gekauftAm bleibt bewusst stehen: es ist das urspruengliche Ereignis, bestelltAm nur
+// die Uebersetzung davon.
+function migrateGekauft(meldungen) {
+  meldungen.forEach((m) => {
+    if (!m || m.status !== "gekauft") return;
+    m.status = "bestellt";
+    if (!m.bestelltAm) m.bestelltAm = m.gekauftAm || null;
+  });
 }
 
 // Wendet mutate() auf appData an und speichert. Bei Konflikt (409) wird der aktuelle
@@ -217,7 +234,8 @@ async function submitMeldung() {
       erstelltAm: new Date().toISOString(),
       entschiedenAm: null,
       entschiedenVon: null,
-      gekauftAm: null
+      bestelltAm: null,
+      verteiltAm: null
     };
     await saveWithConflictRetry((data) => { data.meldungen.push(ticket); });
     await pushVorgang("neu", ticket.id);
@@ -313,9 +331,15 @@ function bearbeitetFilterLabel() {
   return currentBearbeitetFilter === "alle" ? "Alle bearbeiteten" : statusLabel(currentBearbeitetFilter);
 }
 
+// Statuswerte, bei denen noch eine Aktion offen ist, die den Admin-Kommentar mitspeichert.
+// Nur dort darf das Eingabefeld erscheinen — sonst tippt jemand einen Kommentar, den keine
+// Aktion mehr wegschreibt (stiller Datenverlust, siehe 1.1).
+const KOMMENTAR_EDITIERBAR = ["offen", "angenommen", "bestellt"];
+
 // Ein Markup fuer beide Tabs — welche Aktionen erscheinen, haengt allein am Status der
-// Meldung, nicht am Tab. Damit bleibt "Als gekauft markieren" bei angenommenen Meldungen
-// erreichbar, obwohl die im Tab "Bearbeitet" stehen.
+// Meldung, nicht am Tab. Damit bleiben "Als bestellt markieren" und "Als verteilt
+// markieren" erreichbar, obwohl angenommene und bestellte Meldungen im Tab "Bearbeitet"
+// stehen.
 function adminMeldungRowHtml(m) {
   return `
     <div class="meldung-row" data-id="${escapeHtml(m.id)}">
@@ -324,7 +348,7 @@ function adminMeldungRowHtml(m) {
         <div class="meldung-positionen">${escapeHtml(positionenText(m.positionen))}</div>
         <div class="meldung-grund muted">${escapeHtml(m.grund)}</div>
         ${m.dringlichkeit === "dringend" ? `<span class="dringend-flag">⚠ Dringend</span>` : ""}
-        ${(m.status === "offen" || m.status === "angenommen") ? `
+        ${KOMMENTAR_EDITIERBAR.includes(m.status) ? `
         <div class="form-field admin-kommentar-field">
           <label>Admin-Kommentar</label>
           <input type="text" class="admin-kommentar-input" value="${escapeHtml(m.adminKommentar || "")}" placeholder="z.B. wird nächste Woche bestellt" />
@@ -336,7 +360,8 @@ function adminMeldungRowHtml(m) {
           <button type="button" class="btn success small btn-annehmen">Annehmen</button>
           <button type="button" class="btn secondary small btn-ablehnen">Ablehnen</button>
         ` : ""}
-        ${m.status === "angenommen" ? `<button type="button" class="btn small btn-gekauft">Als gekauft markieren</button>` : ""}
+        ${m.status === "angenommen" ? `<button type="button" class="btn small btn-bestellt">Als bestellt markieren</button>` : ""}
+        ${m.status === "bestellt" ? `<button type="button" class="btn success small btn-verteilt">Als verteilt markieren</button>` : ""}
         <button type="button" class="btn secondary small btn-delete-meldung">Löschen</button>
       </div>
     </div>`;
@@ -390,13 +415,29 @@ async function entscheideMeldung(id, entscheidung, adminKommentar) {
   renderAdminMeldungen();
 }
 
-async function alsGekauftMarkieren(id, adminKommentar) {
+// Bewusst zwei benannte Funktionen mit je eigenem Vorgaenger-Guard statt eines generischen
+// Status-Setters: so ist ein Sprung ueber einen Schritt hinweg (angenommen -> verteilt,
+// offen -> bestellt) strukturell ausgeschlossen, nicht nur durch die Buttons verhindert.
+async function alsBestelltMarkieren(id, adminKommentar) {
   if (!canAdmin()) return;
   await saveWithConflictRetry((data) => {
     const m = data.meldungen.find((x) => x.id === id);
     if (!m || m.status !== "angenommen") return;
-    m.status = "gekauft";
-    m.gekauftAm = new Date().toISOString();
+    m.status = "bestellt";
+    m.bestelltAm = new Date().toISOString();
+    if (adminKommentar !== undefined) m.adminKommentar = adminKommentar;
+  });
+  renderAdminMeldungen();
+}
+
+// Endzustand: verteilt = der Vorgang ist abgeschlossen, danach gibt es nur noch Loeschen.
+async function alsVerteiltMarkieren(id, adminKommentar) {
+  if (!canAdmin()) return;
+  await saveWithConflictRetry((data) => {
+    const m = data.meldungen.find((x) => x.id === id);
+    if (!m || m.status !== "bestellt") return;
+    m.status = "verteilt";
+    m.verteiltAm = new Date().toISOString();
     if (adminKommentar !== undefined) m.adminKommentar = adminKommentar;
   });
   renderAdminMeldungen();
@@ -520,7 +561,8 @@ async function init() {
     const kommentar = kommentarInput ? kommentarInput.value.trim() : undefined;
     if (e.target.closest(".btn-annehmen")) entscheideMeldung(id, "angenommen", kommentar);
     else if (e.target.closest(".btn-ablehnen")) entscheideMeldung(id, "abgelehnt", kommentar);
-    else if (e.target.closest(".btn-gekauft")) alsGekauftMarkieren(id, kommentar);
+    else if (e.target.closest(".btn-bestellt")) alsBestelltMarkieren(id, kommentar);
+    else if (e.target.closest(".btn-verteilt")) alsVerteiltMarkieren(id, kommentar);
     else if (e.target.closest(".btn-delete-meldung")) deleteMeldungAdmin(id);
   };
   document.getElementById("verwaltung-rows").addEventListener("click", onMeldungAction);

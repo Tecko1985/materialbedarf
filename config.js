@@ -2,6 +2,22 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
+    version: "1.1",
+    groups: [
+      {
+        title: "Bestellt und verteilt",
+        items: [
+          "Nach der Annahme hat eine Meldung zwei weitere Stationen: „Bestellt“, sobald das Material geordert ist, und „Verteilt“, sobald es bei der Mannschaft angekommen ist.",
+          "Der Weg ist fest: Offen → Angenommen → Bestellt → Verteilt. Kein Schritt lässt sich überspringen; „Abgelehnt“ endet sofort.",
+          "„Verteilt“ schließt den Vorgang ab — danach bleibt nur noch Löschen.",
+          "Der Filter im Reiter „Bearbeitet“ trennt jetzt zwischen bestellt und verteilt: was noch beim Händler liegt, steht damit nicht mehr zwischen dem Erledigten.",
+          "Der Kommentar bleibt bis zur Verteilung änderbar und wird mit jedem Schritt mitgespeichert.",
+          "Der frühere Stand „Gekauft/Erledigt“ heißt jetzt „Bestellt“. Die vorhandenen Meldungen stehen deshalb auf „Bestellt“ — was schon draußen ist, lässt sich einmalig auf „Verteilt“ nachziehen."
+        ]
+      }
+    ]
+  },
+  {
     version: "1.0",
     groups: [
       {
@@ -16,8 +32,8 @@ const APP_CHANGELOG = [
         title: "Entscheiden",
         items: [
           "Der Reiter „Verwaltung“ zeigt ausschließlich die offenen Meldungen — was noch zu entscheiden ist, steht sofort im Blick.",
-          "Angenommene, abgelehnte und gekaufte Meldungen stehen im Reiter „Bearbeitet“ und sind dort nach Status filterbar.",
-          "Eine angenommene Meldung lässt sich als gekauft markieren, in beiden Reitern.",
+          "Entschiedene Meldungen stehen im Reiter „Bearbeitet“ und sind dort nach Status filterbar.",
+          "Der weitere Stand einer angenommenen Meldung lässt sich in beiden Reitern setzen.",
           "Zu jeder Meldung kann ein Kommentar hinterlegt werden.",
           "Beide Reiter haben einen Export als Text oder PDF — jeweils genau die Meldungen, die gerade angezeigt werden."
         ]
@@ -37,7 +53,7 @@ const APP_CHANGELOG = [
         items: [
           "Sehen: die eigenen Meldungen. Das Melde-Formular erscheint nicht, eine Meldung anlegen geht nicht — auch nicht am Bildschirm vorbei.",
           "Bearbeiten: Bedarf melden und eigene offene Meldungen zurückziehen.",
-          "Administrieren: annehmen, ablehnen, als gekauft markieren, kommentieren, fremde Meldungen löschen und exportieren. Die Reiter „Verwaltung“ und „Bearbeitet“ sind nur auf dieser Stufe sichtbar.",
+          "Administrieren: annehmen, ablehnen, den weiteren Stand setzen, kommentieren, fremde Meldungen löschen und exportieren. Die Reiter „Verwaltung“ und „Bearbeitet“ sind nur auf dieser Stufe sichtbar.",
           "Die Trennung ist Absicht: Bedarf melden ist die tägliche Arbeit, über Geld entscheiden ist es nicht.",
           "Der Reiter „Info“ ist für alle sichtbar."
         ]
